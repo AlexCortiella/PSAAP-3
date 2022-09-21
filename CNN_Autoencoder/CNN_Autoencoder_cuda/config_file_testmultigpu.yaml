@@ -1,0 +1,43 @@
+# CNN Autoencoder configuration file
+
+model_name: "CNNAE_test_fulldatavf"
+
+###### Parallel computing setup ######
+
+if_cuda: True
+num_devices: 2
+num_nodes: 1
+num_workers: 4
+
+###### Directories setup ######
+
+train_dir: "../data/Schlieren/train/"
+val_dir: "../data/Schlieren/val/"
+test_dir: "../data/Schlieren/test/"
+pred_dir: "../data/Schlieren/pred/"
+out_dir: "./results"
+log_dir: './results'
+
+###### Model architecture  setup ######
+
+cnn_layers: [5, 5, 5, 5, 5]
+fc_layers: [10]
+max_channels: 32
+kernel_size: 3
+
+###### Training setup ######
+lr: 0.001
+seed: 1
+gamma: 0.5
+train_batch: 1
+val_batch: 1
+test_batch: 1
+lr_schedule: [20, 50, 100, 300]
+epochs: 200
+
+###### Schlieren video setup ######
+start: 0.0
+stop: 5.0
+step: 0.1
+height: [74, 748]
+width: [258, 692]

@@ -1,0 +1,60 @@
+# CNN Autoencoder configuration file
+
+model_name: "CNNAE_ignition"
+
+###### Dataset setup ######
+dataset:
+  fulldata_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/fulldataset"
+  splitdata_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/dataset"
+
+  train_split: 0.8
+  val_split: 0.2
+  pred_cases: 1
+
+  ignition: True
+  X_laser_location: 
+  Y_laser_location: 
+  Z_laser_location: 
+
+###### Parallel computing setup ######
+
+if_cuda: True
+num_devices: 2
+num_nodes: 1
+num_workers: 4
+
+###### Directories setup ######
+
+train_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/dataset/train"
+val_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/dataset/val"
+test_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/dataset/test"
+pred_dir: "/usr/workspace/cortiell/CUResearch/psaap_data/schlierens/dataset/pred"
+#train_dir: "/scratch/alpine/alco4204/CUResearch/data/schlierens/dataset/train"
+#val_dir: "/scratch/alpine/alco4204/CUResearch/data/schlierens/dataset/val"
+#test_dir: "/scratch/alpine/alco4204/CUResearch/data/schlierens/dataset/test"
+#pred_dir: "/scratch/alpine/alco4204/CUResearch/data/schlierens/dataset/pred"
+out_dir: "/p/gpfs1/cortiell/PSAAP3/CUResearch/simulations/results"
+
+###### Model architecture  setup ######
+
+cnn_layers: [5, 5, 5, 5, 5]
+fc_layers: [64, 32, 8, 2]
+max_channels: 32
+kernel_size: 3
+
+###### Training setup ######
+lr: 0.001
+seed: 1
+gamma: 0.5
+train_batch: 1
+val_batch: 1
+test_batch: 1
+lr_schedule: [20, 50, 100, 300]
+epochs: 200
+
+###### Schlieren video setup ######
+start: 0.0
+stop: 5.0
+step: 0.1
+height: [74, 748]
+width: [258, 692]

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+
+### BSUB Configuration
+#BSUB -nnodes 1                   #number of nodes
+#BSUB -W 120                      #walltime in minutes
+#BSUB -e joberrors.%J             #stderr
+#BSUB -o myoutput.%J             #stdout
+#BSUB -J CNNAE                    #name of job
+#BSUB -q pdebug                   #queue to use
+#BSUB/bsub -env
+#BSUB -alloc_flags ipisolate
+
+echo "== Loading modules! =="
+
+module load cuda/11.3.0
+
+#Activate conda base environment
+echo "Activating conda base environment..."
+eval $(conda shell.bash hook)
+
+echo "Activating deep_learning environment..."
+conda activate deep_learningi
+
+echo "Conda environment info: "
+conda info
+
+#Confirm pytorch detects GPUs
+python -c "import torch; print(f'GPUs available: {torch.cuda.is_available()}\nNumber of CUDA devices: {torch.cuda.device_count()}\n')"
+
+echo "== Submitting $LSB_JOBID job! =="
+sleep 10
+
+echo "###################################################"
+echo "Generating dataset..."
+echo "###################################################"
+
+python /projects/alco4204/CUResearch/psaap_data/schlierens/split_data.py --config config_file_testmultigpu.yaml
+
+echo "###################################################"
+echo "Starting model run..."
+echo "###################################################"
+
+jsrun -n 1 -r 1 -a 1 -c 40 -g 4 --bind none python /projects/alco4204/CUResearch/psaap_codes/CNN_Autoencoder_cuda/main_CNNAE_testmultigpu.py --config config_file_testmultigpu.yaml --jobid $LSB_JOBID
+echo "== End of $LSB_JOBID job =="
