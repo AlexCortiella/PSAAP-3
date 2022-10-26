@@ -1,3 +1,3 @@
 #! /bin/bash
 
-python train.py\
+python train.py --config config_file.yaml\
