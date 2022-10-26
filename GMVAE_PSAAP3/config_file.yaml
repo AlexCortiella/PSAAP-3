@@ -24,7 +24,7 @@ model:
   input_dim: 50
   latent_dim: 2
   inter_dims: [32, 16, 8]
-  nClusters: 2
+  nClusters: 4
   
 #PT LightningDataModule arguments
 data:

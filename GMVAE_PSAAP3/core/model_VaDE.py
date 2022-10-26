@@ -12,6 +12,8 @@ from sklearn.mixture import GaussianMixture
 from sklearn.metrics import accuracy_score
 import numpy as np
 import os
+from torch.distributions.categorical import Categorical
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 import ipdb
 
@@ -108,6 +110,7 @@ class VaDE(LightningModule):
         self.input_dim = input_dim
 
     def predict(self,x):
+        """Predicts the cluster that x belongs to"""
         z_mu, z_sigma2_log = self.encoder(x)
         z = torch.randn_like(z_mu) * torch.exp(z_sigma2_log / 2) + z_mu
         pi = torch.exp(self.pi_vect) / torch.sum(torch.exp(self.pi_vect))
@@ -134,7 +137,8 @@ class VaDE(LightningModule):
         #Sample latent
         z = torch.randn_like(z_mu) * torch.exp(z_sigma2_log / 2) + z_mu
         #Cluster probabilities
-        pi = torch.exp(self.pi_vect) / torch.sum(torch.exp(self.pi_vect))
+        #pi = torch.exp(self.pi_vect) / torch.sum(torch.exp(self.pi_vect))
+        pi = F.softmax(self.pi_vect, dim = 0)
         #Mean and variance of cluster Gaussian
         mu_c = self.mu_c
         log_sigma2_c = self.log_sigma2_c
@@ -168,9 +172,10 @@ class VaDE(LightningModule):
         loss_rec = -F.mse_loss(x, x_rec_mean)
         
         #Extract learnable parameters
-        pi = torch.exp(self.pi_vect) / torch.sum(torch.exp(self.pi_vect))
-        log_sigma2_c=self.log_sigma2_c
-        mu_c=self.mu_c
+        #pi = torch.exp(self.pi_vect) / torch.sum(torch.exp(self.pi_vect))
+        pi = F.softmax(self.pi_vect, dim = 0) 
+        log_sigma2_c=self.log_sigma2_c #nClusters x latent_dim
+        mu_c=self.mu_c #nClusters x latent_dim
                 
         #Compute gamma
         gamma=torch.exp(torch.log(pi.unsqueeze(0)) + self.gaussian_pdfs_log(z,mu_c,log_sigma2_c)) + det
@@ -351,13 +356,24 @@ class VaDE(LightningModule):
         
     def generate_sample(self, num_samples):
         
-        p = torch.distributions.Normal(torch.zeros((self.latent_dim)), torch.ones((self.latent_dim)))
+        categorical = Categorical(F.softmax(self.pi_vect,dim=0))
         X = []
         Z = []
+        C = []
         
         for s in range(num_samples):
-            z = p.sample()
+            #Sample cluster c
+            c = categorical.sample()
+            C.append(c)
+            #Assign mean and variance for cluster c
+            log_sigma2_c=self.log_sigma2_c[c,:]
+            mu_c=self.mu_c[c,:]
+            
+            #Generate a latent sample z_c 
+            z = torch.randn_like(mu_c)*torch.exp(log_sigma2_c/2) + mu_c
             Z.append(z)
+            
+            #Generate an input sample x
             x = self.decoder(z)
             X.append(x)
-        return X, Z
+        return X, Z, C
