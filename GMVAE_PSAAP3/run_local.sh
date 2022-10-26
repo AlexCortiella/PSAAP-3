@@ -1,3 +1,3 @@
 #! /bin/bash
 
-python3 main.py fit \
+python train.py\
