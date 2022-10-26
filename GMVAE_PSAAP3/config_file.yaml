@@ -1,0 +1,39 @@
+#Experiment configuration file.
+
+#PT Lightning trainer arguments.
+#Documentation: https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html
+#Comment out options you aren't using
+train:
+
+  cuda: False
+  devices: 1
+  num_nodes: 1
+  strategy: "ddp"
+
+  default_root_dir: "/home/alex/Desktop/PSAAP3/psaap_codes/VaDE_lassen/results"
+  enable_checkpointing: True #bool
+  check_val_every_n_epoch: 1 #int
+  
+  log_every_n_steps: 1 #int
+  max_epochs: 100 #int
+  logger: True #bool
+  early_stopping: False #bool
+  
+#Model arguments
+model:
+  input_dim: 50
+  latent_dim: 2
+  inter_dims: [32, 16, 8]
+  nClusters: 2
+  
+#PT LightningDataModule arguments
+data:
+  data_dir: "data/surface_reaction_data_lowres.json" 
+  train_batch: 1 #int
+  val_batch: 1 #int
+  test_batch: 1 #int
+  num_workers: 4
+
+# #Extra arguments
+extra:
+  
