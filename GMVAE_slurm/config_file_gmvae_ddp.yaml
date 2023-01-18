@@ -1,0 +1,38 @@
+# GMVAE-AEflow configuration file
+
+model_name: "GMVAE_DDP"
+
+#######################################
+###### DATA config ######
+#######################################
+
+train_dir: './data/two_trajectories_dataset/'
+pred_dir: './data/prediction_dataset/'
+
+# snapshot_path: './results/snapshot_2.pt'
+logs_path: './results/logs'
+predictions_path: './results/predictions'
+snapshot_path: './results/logs/run_0/snapshot.pt'
+
+#######################################
+###### MODEL config ######
+#######################################
+
+#GMVAE params
+latent_dim: 4
+n_clusters: 2
+n_modalities: 1
+
+#######################################
+###### TRAINER config ######
+#######################################
+
+seed: 1
+batch_size: 1
+learning_rate: 0.0005
+total_epochs: 10
+save_every: 1
+restart: True
+early_stop: False
+cuda: True
+
