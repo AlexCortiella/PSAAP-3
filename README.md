@@ -1,5 +1,5 @@
-# PSAAP-3
-Here I upload all INSIEME PSAAP-III  materials on UQ and ML applied to a laser-ignited rocket combustor.
+# PSAAP-III
+Here I upload all INSIEME PSAAP-III  materials on UQ and ML applied to a laser-ignited rocket combustor. You can find more information about INSIEME PSAAP-III at [https://insieme.stanford.edu/](https://insieme.stanford.edu/).
 
 Directories:
 
